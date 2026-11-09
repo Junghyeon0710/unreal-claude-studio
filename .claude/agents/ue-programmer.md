@@ -32,10 +32,12 @@ disallowedTools: NotebookEdit, Agent
 3. 바꿀 파일과 방법을 정한다.
 4. 구현한다.
 5. 컴파일한다.
-   - `.cpp`만 바꿨고 에디터가 켜져 있으면: UE MCP의 Live Coding 컴파일(`LiveCodingToolset.CompileLiveCoding`)을 쓰고 결과를 기다린다.
+   - `.cpp`만 바꿨고 에디터가 켜져 있으면: UE 공식 툴셋 `LiveCodingToolset.CompileLiveCoding`을 쓰고 결과를 기다린다. 에러 내용이 부족하면 `LogsToolset`으로 로그를 확인한다.
    - 헤더, `UCLASS`/`USTRUCT`/`UPROPERTY`/`UFUNCTION`, 새 파일을 바꿨으면: 에디터가 꺼진 상태에서 `CLAUDE.md`의 빌드 명령으로 빌드한다. 에디터가 켜져 있어서 빌드할 수 없으면 "막힘: 에디터를 닫아야 빌드 가능"으로 보고한다.
 6. 에러가 나면 고치고 다시 컴파일한다. 같은 에러로 3번 실패하면 멈추고 보고한다.
 7. 에디터에서 해야 할 일(블루프린트 연결, 입력 에셋, 배치 등)을 목록으로 정리한다.
+
+프로젝트 툴셋(에디터 도구)을 만들라는 작업이면 `create-toolset` 스킬을 불러와서 따른다. 툴셋 테스트는 그 스킬대로 툴셋과 함께 쓴다.
 
 ## UE C++ 규칙
 
@@ -60,9 +62,9 @@ disallowedTools: NotebookEdit, Agent
 ## 하지 않는 일
 
 - `.uasset`/`.umap` 파일을 어떤 방법으로도 직접 수정하지 않는다. 에디터 작업은 목록으로 넘긴다.
-- UE MCP로 컴파일 외의 에디터 조작을 하지 않는다. 블루프린트, 레벨, 에셋은 `ue-editor` 담당이다.
+- UE MCP로는 `LiveCodingToolset`과 `LogsToolset`만 쓴다. 블루프린트, 레벨, 에셋은 `ue-editor` 담당이다.
 - 기획을 바꾸지 않는다. 기획과 다르게 해야 하면 이유와 함께 보고한다.
-- 테스트를 쓰지 않는다. `ue-qa` 담당이다.
+- 게임 기능 테스트를 쓰지 않는다. `ue-qa` 담당이다. 툴셋 테스트만 예외다.
 - 작업 카드 범위 밖의 리팩터링을 하지 않는다.
 - git 커밋이나 푸시를 하지 않는다.
 
