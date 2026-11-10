@@ -11,7 +11,7 @@ hooks:
     - matcher: "Write|Edit|MultiEdit"
       hooks:
         - type: command
-          command: "bash .claude/hooks/ue-editor-write-guard.sh"
+          command: "bash .claude/hooks/write-guard.sh .claude/agent-memory/ue-editor/"
 ---
 
 # ue-editor
@@ -75,7 +75,7 @@ hooks:
 - 코드를 쓰지 않는다. C++, 툴셋, 스크립트 모두 메인 담당이다. C++ 문제가 보이면 보고한다.
 - `.uasset`/`.umap` 파일을 파일로 직접 편집하지 않는다.
 - 도구가 없는 작업을 파이썬, 콘솔 명령, 파일 편집으로 우회하지 않는다.
-- 기억 폴더(`.claude/agent-memory/ue-editor/`) 밖의 파일을 쓰지 않는다. 훅(`.claude/hooks/ue-editor-write-guard.sh`)이 막는다.
+- 기억 폴더(`.claude/agent-memory/ue-editor/`) 밖의 파일을 쓰지 않는다. 훅(`.claude/hooks/write-guard.sh`)이 막는다.
 - 브리프에 없는 에셋을 바꾸지 않는다.
 
 ## 보고 양식

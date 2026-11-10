@@ -11,7 +11,7 @@
 | `ue-programmer` | 작업 카드 하나의 C++ 구현 | 독립된 작업을 따로 맡길 때 (병렬 작업 등) | 세션 모델 |
 | `ue-editor` | 에디터 안 작업 (블루프린트, 입력, 레벨, 에셋). 도구가 없으면 우회하지 않고 필요한 도구를 보고함 | 에디터를 만질 때 항상 | Sonnet |
 | `ue-qa` | 자동 테스트 작성과 실행, 플레이 체크리스트 | 구현이 끝났을 때 | Sonnet |
-| `ue-reviewer` | C++ 검토 (지적만, 수정 안 함) | C++이 바뀐 뒤, 작업 완료 전 | 세션 모델 |
+| `ue-reviewer` | C++, 테스트 코드, 프로젝트 툴셋 검토. 에픽 C++ 코딩 표준 기준 (지적만, 수정 안 함) | 코드가 바뀐 뒤, 작업 완료 전 | 세션 모델 |
 
 파일은 `.claude/agents/`에 있습니다.
 
@@ -21,7 +21,7 @@
 - 에디터 작업과 Live Coding 컴파일에는 UE `ModelContextProtocol`과 `AllToolsets` 플러그인이 필요합니다. 에이전트는 UE가 제공하는 공식 툴셋(`Engine/Plugins/Experimental/Toolsets/`)만 사용합니다.
 - 언리얼 프로젝트 루트의 `CLAUDE.md`에 엔진 경로, 빌드 명령, 테스트 폴더를 적어야 합니다.
 - 에픽이 만든 Claude Code 플러그인 `unreal-engine-skills-for-claude-code` (공식 마켓플레이스). 에이전트가 이 플러그인의 `unreal-mcp`, `create-toolset` 스킬을 씁니다.
-- `bash` (Windows는 Git Bash). `ue-editor`의 훅(`.claude/hooks/ue-editor-write-guard.sh`)이 기억 폴더 밖 쓰기를 막는 데 씁니다. 프로젝트 폴더를 신뢰한다고 승인해야 훅이 동작합니다.
+- `bash` (Windows는 Git Bash). 에이전트 훅에 씁니다. `write-guard.sh`는 `ue-editor`와 `ue-reviewer`가 자기 기억 폴더 밖에 쓰지 못하게 막고, `readonly-git-guard.sh`는 `ue-reviewer`의 Bash를 git 읽기 명령으로 제한합니다. 프로젝트 폴더를 신뢰한다고 승인해야 훅이 동작합니다.
 - (선택) Python Remote Execution: 프로젝트 설정 > 플러그인 > Python > "Enable Remote Execution?". 프로젝트 툴셋을 에디터 재시작 없이 다시 불러오거나 일회용 스크립트를 실행할 때 필요합니다. 기본값은 내 PC 안에서만 통신하지만(127.0.0.1), 내 PC의 다른 프로그램도 에디터에 코드를 보낼 수 있게 됩니다.
 
 ## 도구가 없을 때
