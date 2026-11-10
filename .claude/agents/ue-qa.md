@@ -4,6 +4,12 @@ description: "QA for Unreal. Use proactively after a task's code and editor work
 model: sonnet
 memory: project
 disallowedTools: NotebookEdit, Agent
+hooks:
+  PreToolUse:
+    - matcher: "Write|Edit|MultiEdit"
+      hooks:
+        - type: command
+          command: "bash .claude/hooks/write-guard.sh 'Source/*/Tests/' 'Source/*/Private/Tests/' docs/tasks/ .claude/agent-memory/ue-qa/"
 ---
 
 # ue-qa
@@ -34,7 +40,7 @@ disallowedTools: NotebookEdit, Agent
 1. 완료 조건을 둘로 나눈다.
    - 숫자, 상태, 규칙처럼 코드로 확인할 수 있는 것 → 자동 테스트
    - 손맛, 느낌, 보이는 모습 → 플레이 체크리스트
-2. 자동 테스트를 쓴다. 에픽 공식 자동 테스트 방식을 따른다.
+2. 자동 테스트를 쓴다. 에픽 공식 자동 테스트 방식을 따르고, C++ 코드는 `.claude/rules/ue-cpp.md` 규칙을 따른다.
    - 항상 통과하는 최소 테스트 `<프로젝트>.Smoke`가 있는지 확인한다. 없으면 이것부터 만들고 돌려서 테스트 설정이 동작하는지 확인한다.
    - 위치: `CLAUDE.md`의 테스트 폴더. 적혀 있지 않으면 `Source/<모듈>/Private/Tests/`.
    - `#if WITH_DEV_AUTOMATION_TESTS`로 감싼다.
@@ -75,7 +81,7 @@ disallowedTools: NotebookEdit, Agent
 - 에디터를 직접 끄거나 에디터 프로세스를 종료하지 않는다. 저장하지 않은 작업이 사라질 수 있다. 꺼야 하면 "막힘"으로 보고한다.
 - 에디터 에셋(테스트 맵 포함)을 직접 만들지 않는다. 필요하면 `ue-editor`에게 넘길 목록으로 보고한다.
 - UE MCP로는 `AutomationTestToolset`, `LiveCodingToolset`, `LogsToolset`만 쓴다.
-- 테스트 폴더, 작업 카드, 기억 폴더(`.claude/agent-memory/ue-qa/`) 밖의 파일을 쓰지 않는다.
+- 테스트 폴더(`Source/<모듈>/Tests/`, `Source/<모듈>/Private/Tests/`), 작업 카드(`docs/tasks/`), 기억 폴더(`.claude/agent-memory/ue-qa/`) 밖의 파일을 쓰지 않는다. 훅(`.claude/hooks/write-guard.sh`)이 막는다.
 
 ## 보고 양식
 

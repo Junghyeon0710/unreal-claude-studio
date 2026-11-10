@@ -13,7 +13,11 @@
 | `ue-qa` | 자동 테스트 작성과 실행, 플레이 체크리스트 | 구현이 끝났을 때 | Sonnet |
 | `ue-reviewer` | C++, 테스트 코드, 프로젝트 툴셋 검토. 에픽 C++ 코딩 표준 기준 (지적만, 수정 안 함) | 코드가 바뀐 뒤, 작업 완료 전 | 세션 모델 |
 
-파일은 `.claude/agents/`에 있습니다.
+파일은 `.claude/agents/`에 있습니다. 함께 쓰는 것:
+
+- `.claude/rules/ue-cpp.md`: C++ 규칙(언리얼 기본, 에픽 C++ 코딩 표준, 읽기 쉬운 코드, 구조와 의존성). `Source/`, `Plugins/`의 C++ 파일을 열면 자동으로 읽힙니다. 메인, `ue-programmer`, `ue-qa`가 이 규칙으로 쓰고 `ue-reviewer`가 이 규칙으로 검토합니다.
+- `.claude/skills/editor-tool-request/`: 공식 도구가 없을 때 메인이 따르는 절차
+- `.claude/hooks/`: 에이전트 쓰기 범위와 명령을 막는 훅
 
 ## 요구 사항
 
@@ -21,7 +25,7 @@
 - 에디터 작업과 Live Coding 컴파일에는 UE `ModelContextProtocol`과 `AllToolsets` 플러그인이 필요합니다. 에이전트는 UE가 제공하는 공식 툴셋(`Engine/Plugins/Experimental/Toolsets/`)만 사용합니다.
 - 언리얼 프로젝트 루트의 `CLAUDE.md`에 엔진 경로, 빌드 명령, 테스트 폴더를 적어야 합니다.
 - 에픽이 만든 Claude Code 플러그인 `unreal-engine-skills-for-claude-code` (공식 마켓플레이스). 에이전트가 이 플러그인의 `unreal-mcp`, `create-toolset` 스킬을 씁니다.
-- `bash` (Windows는 Git Bash). 에이전트 훅에 씁니다. `write-guard.sh`는 `ue-editor`와 `ue-reviewer`가 자기 기억 폴더 밖에 쓰지 못하게 막고, `readonly-git-guard.sh`는 `ue-reviewer`의 Bash를 git 읽기 명령으로 제한합니다. 프로젝트 폴더를 신뢰한다고 승인해야 훅이 동작합니다.
+- `bash` (Windows는 Git Bash). 에이전트 훅에 씁니다. `write-guard.sh`는 에이전트마다 정해진 프로젝트 폴더 밖에 쓰지 못하게 막습니다(`ue-editor`, `ue-reviewer`: 자기 기억 폴더 / `ue-qa`: 테스트 폴더, `docs/tasks/`, 기억 폴더 / `ue-programmer`: `Source/`, `Plugins/`, `docs/tasks/`). 엔진 폴더나 다른 프로젝트도 막힙니다. `readonly-git-guard.sh`는 `ue-reviewer`의 Bash를 git 읽기 명령으로 제한합니다. 프로젝트 폴더를 신뢰한다고 승인해야 훅이 동작합니다.
 - (선택) Python Remote Execution: 프로젝트 설정 > 플러그인 > Python > "Enable Remote Execution?". 프로젝트 툴셋을 에디터 재시작 없이 다시 불러오거나 일회용 스크립트를 실행할 때 필요합니다. 기본값은 내 PC 안에서만 통신하지만(127.0.0.1), 내 PC의 다른 프로그램도 에디터에 코드를 보낼 수 있게 됩니다.
 
 ## 도구가 없을 때
@@ -33,7 +37,7 @@
 3. `ue-reviewer` 검토 → 에디터에 반영(`ModelContextProtocol.RefreshTools`) → 같은 `ue-editor`가 새 도구로 이어서 작업합니다.
 4. 한 번 만든 도구는 공식 도구처럼 계속 씁니다.
 
-한 번만 할 작업(예: 에셋 수백 개 이름 일괄 변경)만 예외로, 메인이 일회용 스크립트를 쓰고 승인받은 뒤 `Scripts/ue-python.bat`로 실행합니다.
+한 번만 할 작업(예: 에셋 수백 개 이름 일괄 변경)만 예외로, 메인이 일회용 스크립트를 쓰고 승인받은 뒤 `Scripts/ue-python.bat`로 실행합니다. 자세한 절차는 `editor-tool-request` 스킬에 있습니다.
 
 ## 사용법
 
@@ -42,5 +46,5 @@
 3. 프로젝트 `CLAUDE.md`에 적습니다.
    - 프로젝트 툴셋 이름과 위치 (예: `ProjectATools`, `Plugins/ProjectATools/`). 툴셋 테스트 러너 이름은 `<프로젝트>.Tools`로 정해서 프로젝트 테스트 필터에 걸리게 합니다.
    - 테스트 폴더와 명령줄 테스트 명령. 항상 통과하는 최소 테스트 `<프로젝트>.Smoke`를 하나 두면 테스트 설정을 확인할 수 있고, 필터에 걸리는 테스트가 0개라서 실패하는 일도 없습니다.
-   - "도구가 없을 때" 흐름과 일회용 스크립트 규칙
+   - "`ue-editor`가 필요한 도구를 보고하면 `editor-tool-request` 스킬을 따른다", "C++은 `.claude/rules/ue-cpp.md`를 따른다"
    - 에셋 여러 개를 바꾸는 작업 전에는 커밋할지 묻는다는 규칙 (에픽 보안 안내)
