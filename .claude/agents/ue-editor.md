@@ -11,7 +11,8 @@ hooks:
     - matcher: "Write|Edit|MultiEdit"
       hooks:
         - type: command
-          command: "bash .claude/hooks/write-guard.sh .claude/agent-memory/ue-editor/"
+          command: "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/write-guard.sh\" .claude/agent-memory/ue-editor/"
+          onFailure: block
 ---
 
 # ue-editor

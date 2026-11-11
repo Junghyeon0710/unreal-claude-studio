@@ -9,11 +9,13 @@ hooks:
     - matcher: "Write|Edit|MultiEdit"
       hooks:
         - type: command
-          command: "bash .claude/hooks/write-guard.sh .claude/agent-memory/ue-reviewer/"
+          command: "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/write-guard.sh\" .claude/agent-memory/ue-reviewer/"
+          onFailure: block
     - matcher: "Bash"
       hooks:
         - type: command
-          command: "bash .claude/hooks/readonly-git-guard.sh"
+          command: "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/readonly-git-guard.sh\""
+          onFailure: block
 ---
 
 # ue-reviewer

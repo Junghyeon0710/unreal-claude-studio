@@ -16,8 +16,10 @@
 파일은 `.claude/agents/`에 있습니다. 함께 쓰는 것:
 
 - `.claude/rules/ue-cpp.md`: C++ 규칙(언리얼 기본, 에픽 C++ 코딩 표준, 읽기 쉬운 코드, 구조와 의존성). `Source/`, `Plugins/`의 C++ 파일을 열면 자동으로 읽힙니다. 메인, `ue-programmer`, `ue-qa`가 이 규칙으로 쓰고 `ue-reviewer`가 이 규칙으로 검토합니다.
+- `.claude/skills/design/`: 기획실. `/design 게임` 또는 `/design <기능>`으로 메인이 사용자에게 한 번에 하나씩 묻고, 묶음마다 정리해서 승인받은 것만 `docs/design/`에 기획서로 씁니다. 정한 것과 이유를 기획서에 남겨서 새 대화에서도 기획서만 보고 구현할 수 있게 합니다. 확정 전에 읽기 전용 서브에이전트가 "이것만 보고 만들 수 있나"를 점검합니다. 기획서 양식(게임, 기능)도 이 폴더에 있습니다.
 - `.claude/skills/editor-tool-request/`: 공식 도구가 없을 때 메인이 따르는 절차
 - `.claude/hooks/`: 에이전트 쓰기 범위와 명령을 막는 훅
+- `.claude/settings.json`: 에셋 파일(`.uasset`, `.umap`)을 파일로 직접 고치지 못하게 막는 설정. 에셋은 에디터에서만 바꿉니다.
 
 ## 요구 사항
 
@@ -25,7 +27,7 @@
 - 에디터 작업과 Live Coding 컴파일에는 UE `ModelContextProtocol`과 `AllToolsets` 플러그인이 필요합니다. 에이전트는 UE가 제공하는 공식 툴셋(`Engine/Plugins/Experimental/Toolsets/`)만 사용합니다.
 - 언리얼 프로젝트 루트의 `CLAUDE.md`에 엔진 경로, 빌드 명령, 테스트 폴더를 적어야 합니다.
 - 에픽이 만든 Claude Code 플러그인 `unreal-engine-skills-for-claude-code` (공식 마켓플레이스). 에이전트가 이 플러그인의 `unreal-mcp`, `create-toolset` 스킬을 씁니다.
-- `bash` (Windows는 Git Bash). 에이전트 훅에 씁니다. `write-guard.sh`는 에이전트마다 정해진 프로젝트 폴더 밖에 쓰지 못하게 막습니다(`ue-editor`, `ue-reviewer`: 자기 기억 폴더 / `ue-qa`: 테스트 폴더, `docs/tasks/`, 기억 폴더 / `ue-programmer`: `Source/`, `Plugins/`, `docs/tasks/`). 엔진 폴더나 다른 프로젝트도 막힙니다. `readonly-git-guard.sh`는 `ue-reviewer`의 Bash를 git 읽기 명령으로 제한합니다. 프로젝트 폴더를 신뢰한다고 승인해야 훅이 동작합니다.
+- `bash` (Windows는 Git Bash). 에이전트 훅에 씁니다. `write-guard.sh`는 에이전트마다 정해진 프로젝트 폴더 밖에 쓰지 못하게 막습니다(`ue-editor`, `ue-reviewer`: 자기 기억 폴더 / `ue-qa`: 테스트 폴더, `docs/tasks/`, 기억 폴더 / `ue-programmer`: `Source/`, `Plugins/`, `docs/tasks/`). 엔진 폴더나 다른 프로젝트도 막힙니다. 훅은 `${CLAUDE_PROJECT_DIR}`로 스크립트를 찾아서 작업 폴더가 바뀌어도 동작하고, `onFailure: block`이라 훅이 실행되지 못하면 통과시키지 않고 막습니다(Claude Code 2.1.295 이상). `readonly-git-guard.sh`는 `ue-reviewer`의 Bash를 git 읽기 명령으로 제한합니다. 프로젝트 폴더를 신뢰한다고 승인해야 훅이 동작합니다.
 - (선택) Python Remote Execution: 프로젝트 설정 > 플러그인 > Python > "Enable Remote Execution?". 프로젝트 툴셋을 에디터 재시작 없이 다시 불러오거나 일회용 스크립트를 실행할 때 필요합니다. 기본값은 내 PC 안에서만 통신하지만(127.0.0.1), 내 PC의 다른 프로그램도 에디터에 코드를 보낼 수 있게 됩니다.
 
 ## 도구가 없을 때
@@ -44,6 +46,7 @@
 1. 언리얼 프로젝트 루트에 `.claude` 폴더와 `Scripts` 폴더를 복사합니다.
 2. `Scripts/ue-python.bat`의 `UE_ROOT`를 자기 엔진 경로로 바꿉니다.
 3. 프로젝트 `CLAUDE.md`에 적습니다.
+   - "게임" 칸 (처음에는 비워 두고 `/design 게임`으로 채웁니다), 기획서 폴더 `docs/design/`, 작업 카드 폴더
    - 프로젝트 툴셋 이름과 위치 (예: `ProjectATools`, `Plugins/ProjectATools/`). 툴셋 테스트 러너 이름은 `<프로젝트>.Tools`로 정해서 프로젝트 테스트 필터에 걸리게 합니다.
    - 테스트 폴더와 명령줄 테스트 명령. 항상 통과하는 최소 테스트 `<프로젝트>.Smoke`를 하나 두면 테스트 설정을 확인할 수 있고, 필터에 걸리는 테스트가 0개라서 실패하는 일도 없습니다.
    - "`ue-editor`가 필요한 도구를 보고하면 `editor-tool-request` 스킬을 따른다", "C++은 `.claude/rules/ue-cpp.md`를 따른다"

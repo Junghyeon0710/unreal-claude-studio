@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(**/*.uasset)",
+      "Edit(**/*.umap)"
+    ]
+  }
+}

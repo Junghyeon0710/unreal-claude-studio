@@ -9,7 +9,8 @@ hooks:
     - matcher: "Write|Edit|MultiEdit"
       hooks:
         - type: command
-          command: "bash .claude/hooks/write-guard.sh 'Source/*/Tests/' 'Source/*/Private/Tests/' docs/tasks/ .claude/agent-memory/ue-qa/"
+          command: "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/write-guard.sh\" 'Source/*/Tests/' 'Source/*/Private/Tests/' docs/tasks/ .claude/agent-memory/ue-qa/"
+          onFailure: block
 ---
 
 # ue-qa

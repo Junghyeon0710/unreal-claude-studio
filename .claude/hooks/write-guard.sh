@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # PreToolUse hook for subagents (Write/Edit): allow writes only inside the given folders of this project.
-# Usage in agent frontmatter: bash .claude/hooks/write-guard.sh <folder> [<folder> ...]
+# Usage in agent frontmatter: bash "${CLAUDE_PROJECT_DIR}/.claude/hooks/write-guard.sh" <folder> [<folder> ...]
+#   with onFailure: block, so a hook that cannot run blocks the write instead of allowing it.
 #   Folders are relative to the project root and may use * (quote them), e.g. 'Source/*/Tests/'.
 # Anything else, including paths outside the project, is blocked with exit 2.
 # Reads the hook JSON from stdin. No jq needed.

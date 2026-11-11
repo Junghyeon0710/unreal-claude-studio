@@ -8,7 +8,8 @@ hooks:
     - matcher: "Write|Edit|MultiEdit"
       hooks:
         - type: command
-          command: "bash .claude/hooks/write-guard.sh Source/ Plugins/ docs/tasks/"
+          command: "bash \"${CLAUDE_PROJECT_DIR}/.claude/hooks/write-guard.sh\" Source/ Plugins/ docs/tasks/"
+          onFailure: block
 ---
 
 # ue-programmer
