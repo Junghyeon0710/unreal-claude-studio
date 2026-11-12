@@ -16,7 +16,9 @@ $ErrorActionPreference = 'Stop'
 # Windows PowerShell 5.1 leaves $PSScriptRoot empty in param defaults, so resolve the project here.
 if (-not $ProjectDir) { $ProjectDir = Split-Path -Parent (Split-Path -Parent $MyInvocation.MyCommand.Path) }
 [Console]::OutputEncoding = [System.Text.Encoding]::UTF8
-$UeRoot = 'D:\Epic Games\UE_5.8'   # same engine path as ue-python.bat
+# Engine folder: found by ue-root.ps1 next to this script (set UE_ROOT to override).
+$UeRoot = & (Join-Path (Split-Path -Parent $MyInvocation.MyCommand.Path) 'ue-root.ps1') -ProjectDir $ProjectDir
+if ($LASTEXITCODE -ne 0 -or -not $UeRoot) { exit 1 }
 $EditorExe = Join-Path $UeRoot 'Engine\Binaries\Win64\UnrealEditor.exe'
 
 $Uproject = Get-ChildItem -LiteralPath $ProjectDir -Filter *.uproject | Select-Object -First 1
@@ -59,7 +61,9 @@ switch ($Action) {
     'open' {
         if ($TimeoutSec -le 0) { $TimeoutSec = 600 }   # the first start can compile shaders for minutes
         if (-not (Get-ProjectEditor)) {
-            Start-Process -FilePath $EditorExe -ArgumentList ('"' + $Uproject.FullName + '"') | Out-Null
+            # Start the MCP server even if auto-start is off in the per-user settings (a new project has it off).
+            $arguments = '"' + $Uproject.FullName + '" -ModelContextProtocolStartServer -ModelContextProtocolPort=' + $Port
+            Start-Process -FilePath $EditorExe -ArgumentList $arguments | Out-Null
             Write-Output "에디터를 켰습니다. MCP 포트 $Port 를 기다립니다(최대 $TimeoutSec 초)."
         }
         $watch = [Diagnostics.Stopwatch]::StartNew()

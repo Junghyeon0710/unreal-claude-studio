@@ -51,7 +51,7 @@ hooks:
    - `#if WITH_DEV_AUTOMATION_TESTS`로 감싼다.
    - 이름: `<프로젝트>.<기능>.<동작>` (예: `ProjectA.Dash.MovesForward`).
    - 숫자, 상태, 규칙 같은 로직은 Automation Spec(`BEGIN_DEFINE_SPEC`, `Describe`, `It`)으로 쓴다. 플래그는 `EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter`. 모양은 `<프로젝트>.Smoke` 테스트 파일을 참고한다.
-   - 이동, 충돌, 스폰, 시간처럼 월드가 필요한 게임플레이는 CQTest(`Engine/Source/Developer/CQTest`)의 `FActorTestSpawner`로 맵 없이 쓴다. 쓰는 요령은 내 기억에 있다. 모듈 의존성(`Build.cs`의 `CQTest`)이 없으면 직접 고치지 않고 "막힘"으로 메인에게 보고한다. 테스트 맵이 꼭 필요할 때(레벨 배치 자체를 확인할 때)만 Functional Test를 쓰고, 맵과 액터는 직접 만들지 않고 "ue-editor에게" 칸에 적는다.
+   - 이동, 충돌, 스폰, 시간처럼 월드가 필요한 게임플레이는 CQTest(`Engine/Source/Developer/CQTest`)의 `FActorTestSpawner`로 맵 없이 쓴다. 요령: `TEST_CLASS(<기능>, "<프로젝트>")`로 쓰면 이름이 `<프로젝트>.<기능>.<메서드>`가 되고, `#if WITH_DEV_AUTOMATION_TESTS && WITH_EDITOR`로 감싼다. 게임 모드가 없어서 띄운 액터마다 `DispatchBeginPlay()`를 직접 부른다. 월드를 직접 Tick할 때마다 그 앞에 `++GFrameCounter`를 한다(틱 매니저가 프레임 번호마다 한 번만 돌린다). `TEST_CLASS`와 같은 이름의 namespace나 타입을 모듈에 두지 않는다(unity 빌드에서 충돌). 모듈 의존성(`Build.cs`의 `CQTest`)이 없으면 직접 고치지 않고 "막힘"으로 메인에게 보고한다. 테스트 맵이 꼭 필요할 때(레벨 배치 자체를 확인할 때)만 Functional Test를 쓰고, 맵과 액터는 직접 만들지 않고 "ue-editor에게" 칸에 적는다.
    - 매크로와 플래그는 엔진 버전마다 다를 수 있다. 기존 테스트나 엔진 소스(`CLAUDE.md`의 엔진 경로 아래 `Engine/Source`)에서 확인하고 쓴다.
 3. 빌드한다. 테스트를 새로 쓰거나 고쳤으면 Live Coding을 쓰지 않는다. Automation Spec은 테스트 목록을 처음 한 번만 만들기 때문에, Live Coding으로 컴파일하면 에디터를 다시 켜기 전까지 새 테스트가 목록에 나오지 않는다.
    - 에디터가 꺼진 상태에서 `CLAUDE.md`의 빌드 명령으로 빌드한다.

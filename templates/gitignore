@@ -1,0 +1,27 @@
+# Unreal 빌드 결과물과 캐시
+Binaries/
+Intermediate/
+Saved/
+DerivedDataCache/
+Build/
+Plugins/*/Binaries/
+Plugins/*/Intermediate/
+
+# 파이썬 캐시 (프로젝트 툴셋)
+__pycache__/
+
+# IDE와 자동 생성 프로젝트 파일
+.vs/
+.idea/
+*.sln
+*.slnx
+*.suo
+*.user
+*.VC.db
+*.VC.opendb
+*.opensdf
+*.sdf
+
+# Claude Code 개인 설정
+.claude/settings.local.json
+.claude/agent-memory-local/
