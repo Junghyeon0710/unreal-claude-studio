@@ -1,2 +1,6 @@
 # 셸 스크립트는 LF 줄바꿈 유지 (CRLF면 bash가 깨진다)
 *.sh text eol=lf
+
+# 배치 파일은 CRLF 줄바꿈 (LF면 cmd가 드물게 줄을 잘못 읽는다)
+*.bat text eol=crlf
+*.cmd text eol=crlf
