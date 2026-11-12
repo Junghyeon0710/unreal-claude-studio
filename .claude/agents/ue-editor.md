@@ -6,6 +6,10 @@ memory: project
 disallowedTools: Bash, PowerShell, NotebookEdit, Agent
 skills:
   - unreal-engine-skills-for-claude-code:unreal-mcp
+mcpServers:
+  - unreal-editor:
+      type: http
+      url: "http://127.0.0.1:8000/mcp"
 hooks:
   PreToolUse:
     - matcher: "Write|Edit|MultiEdit"

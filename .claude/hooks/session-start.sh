@@ -68,4 +68,17 @@ if git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
   echo "Git: 브랜치 ${branch:-알 수 없음}, 커밋 안 한 변경 ${changes}개"
 fi
 
+# Editor and its MCP port. The main session connects to UE MCP only if the editor was running
+# when the session started; the editor agents connect by themselves each time they are called.
+if [ -f .mcp.json ]; then
+  port="$(sed -n 's#.*"url"[[:space:]]*:[[:space:]]*"http://127\.0\.0\.1:\([0-9]*\)/.*#\1#p' .mcp.json | head -n 1)"
+  port="${port:-8000}"
+  echo
+  if (exec 3<>"/dev/tcp/127.0.0.1/$port") 2>/dev/null; then
+    echo "에디터: 켜짐 (MCP 포트 $port 응답)"
+  else
+    echo "에디터: 꺼짐. 메인 대화의 UE MCP는 이번 대화에서 연결되지 않는다. 에디터는 필요할 때 Scripts\\editor.bat open 으로 켜고, 에디터 작업은 ue-editor에게 맡긴다(부를 때마다 스스로 연결)."
+  fi
+fi
+
 exit 0

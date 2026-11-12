@@ -16,7 +16,7 @@ description: "Use when the ue-editor subagent stops with a '필요한 도구' bl
 3. 툴셋 테스트를 함께 만든다. 테스트 러너 이름은 `<프로젝트>.Tools`로 정한다(`unreal.PythonTestRunner.create('<프로젝트>.Tools', ...)`). 그래야 명령줄 테스트의 기본 필터에 함께 걸린다.
 4. `ue-reviewer`에게 검토받는다.
 5. 에디터에 반영한다.
-   - 첫 도구는 플러그인이 새로 생기므로 사용자에게 저장하고 에디터를 다시 켜 달라고 한다. 에디터를 직접 끄지 않는다.
+   - 첫 도구는 플러그인이 새로 생기므로 저장하고 `Scripts\editor.bat close`로 끈 뒤 `open`으로 다시 켠다.
    - 그다음부터는 Python Remote Execution이 켜져 있으면 에픽의 `reload_remote.py`(엔진 `Engine/Plugins/Experimental/ToolsetRegistry/Content/Python/toolset_registry/tests/`)로 다시 불러올 수 있다. 꺼져 있으면 에디터를 다시 켠다.
    - 반영한 뒤 에디터 콘솔에서 `ModelContextProtocol.RefreshTools`를 실행하고 Claude Code의 MCP를 다시 연결한다.
 6. SendMessage로 같은 `ue-editor`에게 새 도구 이름을 보내 멈췄던 곳부터 이어서 하게 한다.

@@ -3,6 +3,10 @@ name: ue-programmer
 description: "Unreal C++ programmer. Use when the main session hands off a self-contained task card for C++ in Source/, for example to run independent tasks in parallel. 작업 카드 하나의 C++을 UE5 규칙대로 구현하거나 고치고, 컴파일까지 확인한다. 블루프린트와 에셋 작업은 ue-editor에게 넘긴다."
 model: inherit
 disallowedTools: NotebookEdit, Agent
+mcpServers:
+  - unreal-editor:
+      type: http
+      url: "http://127.0.0.1:8000/mcp"
 hooks:
   PreToolUse:
     - matcher: "Write|Edit|MultiEdit"

@@ -4,6 +4,10 @@ description: "QA for Unreal. Use proactively after a task's code and editor work
 model: sonnet
 memory: project
 disallowedTools: NotebookEdit, Agent
+mcpServers:
+  - unreal-editor:
+      type: http
+      url: "http://127.0.0.1:8000/mcp"
 hooks:
   PreToolUse:
     - matcher: "Write|Edit|MultiEdit"
