@@ -18,8 +18,10 @@ description: "Use when the ue-editor subagent stops with a '필요한 도구' bl
 5. 에디터에 반영한다.
    - 첫 도구는 플러그인이 새로 생기므로 저장하고 `Scripts\editor.bat close`로 끈 뒤 `open`으로 다시 켠다.
    - 그다음부터는 Python Remote Execution이 켜져 있으면 에픽의 `reload_remote.py`(엔진 `Engine/Plugins/Experimental/ToolsetRegistry/Content/Python/toolset_registry/tests/`)로 다시 불러올 수 있다. 꺼져 있으면 에디터를 다시 켠다.
-   - 반영한 뒤 에디터 콘솔에서 `ModelContextProtocol.RefreshTools`를 실행하고 Claude Code의 MCP를 다시 연결한다.
-6. SendMessage로 같은 `ue-editor`에게 새 도구 이름을 보내 멈췄던 곳부터 이어서 하게 한다.
+   - `reload_remote.py`로 다시 불러왔으면 에디터 콘솔에서 `ModelContextProtocol.RefreshTools`를 실행한다. 에디터를 다시 켰으면 필요 없다(켜면 새 도구가 바로 보인다).
+6. 멈췄던 `ue-editor`에게 새 도구로 이어서 하게 한다.
+   - 에디터를 다시 켰으면 `ue-editor`를 새로 부른다. 그 에이전트의 MCP 연결은 꺼진 에디터에 붙어 있었으므로 새로 불러야 다시 연결된다. 브리프에 멈췄던 곳과 새 도구 이름을 넣는다.
+   - 다시 켜지 않았으면 SendMessage로 같은 `ue-editor`에게 새 도구 이름을 보낸다.
 
 ## 예외: 한 번만 할 작업은 일회용 스크립트
 

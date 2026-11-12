@@ -51,11 +51,11 @@ hooks:
    - `#if WITH_DEV_AUTOMATION_TESTS`로 감싼다.
    - 이름: `<프로젝트>.<기능>.<동작>` (예: `ProjectA.Dash.MovesForward`).
    - 숫자, 상태, 규칙 같은 로직은 Automation Spec(`BEGIN_DEFINE_SPEC`, `Describe`, `It`)으로 쓴다. 플래그는 `EAutomationTestFlags::EditorContext | EAutomationTestFlags::ProductFilter`. 모양은 `<프로젝트>.Smoke` 테스트 파일을 참고한다.
-   - 이동, 충돌, 스폰처럼 월드가 필요한 게임플레이는 Functional Test로 한다. `/Game/Tests/`의 테스트 맵에 Functional Test 액터를 놓는 방식이다. 처음 필요해지면 "막힘"으로 보고해서 방식(블루프린트 또는 C++, 모듈 설정)을 메인과 정한다. 맵과 액터는 직접 만들지 않고 "ue-editor에게" 칸에 적는다.
+   - 이동, 충돌, 스폰, 시간처럼 월드가 필요한 게임플레이는 CQTest(`Engine/Source/Developer/CQTest`)의 `FActorTestSpawner`로 맵 없이 쓴다. 쓰는 요령은 내 기억에 있다. 모듈 의존성(`Build.cs`의 `CQTest`)이 없으면 직접 고치지 않고 "막힘"으로 메인에게 보고한다. 테스트 맵이 꼭 필요할 때(레벨 배치 자체를 확인할 때)만 Functional Test를 쓰고, 맵과 액터는 직접 만들지 않고 "ue-editor에게" 칸에 적는다.
    - 매크로와 플래그는 엔진 버전마다 다를 수 있다. 기존 테스트나 엔진 소스(`CLAUDE.md`의 엔진 경로 아래 `Engine/Source`)에서 확인하고 쓴다.
 3. 빌드한다. 테스트를 새로 쓰거나 고쳤으면 Live Coding을 쓰지 않는다. Automation Spec은 테스트 목록을 처음 한 번만 만들기 때문에, Live Coding으로 컴파일하면 에디터를 다시 켜기 전까지 새 테스트가 목록에 나오지 않는다.
    - 에디터가 꺼진 상태에서 `CLAUDE.md`의 빌드 명령으로 빌드한다.
-   - 에디터가 켜져 있으면(MCP가 응답하거나 `UnrealEditor.exe` 프로세스가 있으면) 에디터를 끄지 말고 "막힘: 에디터를 저장하고 닫아야 빌드 가능"으로 보고한다. 메인이 사용자에게 부탁한 뒤 이어서 할 일을 보내준다.
+   - 에디터가 켜져 있으면(MCP가 응답하거나 `UnrealEditor.exe` 프로세스가 있으면) 에디터를 끄지 말고 "막힘: 에디터를 저장하고 닫아야 빌드 가능"으로 보고한다. 메인이 에디터를 끈 뒤 이어서 할 일을 보내준다.
    - 테스트 코드를 바꾸지 않고 기존 테스트만 다시 돌릴 때는 빌드하지 않는다.
 4. 테스트를 실행한다. 이번에 만든 테스트만이 아니라 프로젝트 테스트 전체를 돌려서 기존 기능이 깨졌는지도 확인한다. 프로젝트 테스트는 `<프로젝트>.`로 시작하는 테스트(프로젝트 툴셋 테스트 포함)와 `/Game/Tests/` 맵의 Functional Test다.
    - 에디터가 켜져 있고 이번에 테스트 코드를 바꾸지 않았으면 UE 공식 툴셋 `AutomationTestToolset`을 쓴다. 순서: 테스트 찾기 → 필터로 실행 → 끝날 때까지 상태 확인 → 결과 가져오기. 테스트 찾기를 건너뛰면 결과가 비어 나온다. 필터는 `StartsWith:<프로젝트>.+StartsWith:Project.Functional Tests.Tests.`를 쓴다. 그냥 `<프로젝트>`라고 쓰면 이름 중간에 그 글자가 들어간 다른 테스트도 걸린다. 도구 이름과 인자는 `describe_toolset`으로 먼저 확인한다.
